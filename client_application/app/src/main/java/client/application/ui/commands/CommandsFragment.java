@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,7 +30,20 @@ public class CommandsFragment extends Fragment {
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
             }
+
         });
+
+        //Command Buttons
+        Button startbtn = (Button) root.findViewById(R.id.startbtn);
+        //Button stopbtn = (Button) findViewById(R.id.stopbtn);
+        //Button unpairbtn = (Button) findViewById(R.id.unpairbtn);
+
+        startbtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v){
+                commandsViewModel.setText("Start Button Pressed");
+            }
+        });
+
         return root;
     }
 }

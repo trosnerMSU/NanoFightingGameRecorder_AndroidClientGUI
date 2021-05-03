@@ -3,4 +3,7 @@
     <string name="title_connect">Connect</string>
     <string name="title_commands">Commands</string>
     <string name="title_admins">Admins</string>
+    <string name="btn_start">Start</string>
+    <string name="btn_stop">Stop</string>
+    <string name="btn_unpair">Unpair</string>
 </resources>

@@ -16,4 +16,8 @@ public class CommandsViewModel extends ViewModel {
     public LiveData<String> getText() {
         return mText;
     }
+
+    public void setText(String newText){
+        mText.setValue(newText);
+    }
 }

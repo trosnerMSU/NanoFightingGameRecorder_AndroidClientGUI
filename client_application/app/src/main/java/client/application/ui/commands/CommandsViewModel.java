@@ -21,3 +21,4 @@ public class CommandsViewModel extends ViewModel {
         mText.setValue(newText);
     }
 }
+

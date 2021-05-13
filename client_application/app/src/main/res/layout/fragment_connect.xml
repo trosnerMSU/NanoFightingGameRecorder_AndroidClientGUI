@@ -31,7 +31,7 @@
         android:layout_marginBottom="430dp"
         android:autoText="false"
         android:ems="10"
-        android:hint="Ex. https://127.0.0.1:3000/"
+        android:hint="Ex. https://127.0.0.1:3000"
         android:inputType="textPersonName"
         android:paddingTop="20dp"
         android:paddingBottom="20dp"

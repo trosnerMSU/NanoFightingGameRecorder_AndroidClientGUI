@@ -6,7 +6,9 @@ This is the Android Client GUI for the Nano Fighting Game Recorder project. This
 For dependencies, all you need to do is download Android Studio and run this project. Gradle manages the build of the project and will import the dependencies for you.
 
 **Android Physical Demo**
-TBA
+apk file destination: client_application -> app-debug.apk
+
+Once you download this file to your Android device you will be able to run this application from your files.
 
 **Network Settings**
 When you have the Jetson Nano running the local server API on your network, you need to make sure that your android device is also connected to the same network. Make sure you have your IPv4 address from the Jetson Nano and of course the Port number that the API is using. You will have to manually enter in the Jetson Nano's IP and the port into the Android application

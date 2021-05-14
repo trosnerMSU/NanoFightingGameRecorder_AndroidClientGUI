@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -52,6 +53,11 @@ public class ConnectFragment extends Fragment {
     TextView textConnectionResult;
     Button ConnectBtn;
     EditText textDomainName;
+
+    //HashMap with the post request body which will hold the pair key
+    //This is what will be sent to the host server and will allow
+    //The user to actually gain access to the start, stop, unpair buttons
+    private static HashMap<String, String> map = new HashMap<String, String>();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -127,7 +133,9 @@ public class ConnectFragment extends Fragment {
                             //We set the url equal to the local url so that the Commands Fragment
                             //Can access the url that we are paired to.
                             pairKey = response.getString("msg");
-                            url = localUrl;
+                            map.clear();
+                            map.put("key", pairKey);
+                            url = localUrl.replace("/pair","");
                             isPaired = true;
                             textConnectionResult.setText("Successfully paired!");
                         }catch(JSONException e){
@@ -197,6 +205,11 @@ public class ConnectFragment extends Fragment {
     public static void unpair(){
         isPaired = false;
         url = "";
+        map.clear();
+    }
+
+    public static HashMap<String, String> getMap(){
+        return map;
     }
 
 }

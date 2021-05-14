@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -36,6 +38,11 @@ import client.application.ui.connect.ConnectFragment;
 public class CommandsFragment extends Fragment {
 
     private CommandsViewModel commandsViewModel;
+    private String responseMsg;
+    Button startbtn;
+    Button stopbtn;
+    Button unpairbtn;
+    TextView resultText;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -54,41 +61,47 @@ public class CommandsFragment extends Fragment {
         //For Https self-signed CA connections
         ConnectFragment.handleSSLHandshake();
 
-        //Command Buttons
-        Button startbtn = (Button) root.findViewById(R.id.startbtn);
-        Button stopbtn = (Button) root.findViewById(R.id.stopbtn);
-        Button unpairbtn = (Button) root.findViewById(R.id.unpairbtn);
-        TextView resultText = (TextView) root.findViewById(R.id.commandResult);
+        //Command button declaration
+        startbtn = (Button) root.findViewById(R.id.startbtn);
+        stopbtn = (Button) root.findViewById(R.id.stopbtn);
+        unpairbtn = (Button) root.findViewById(R.id.unpairbtn);
+        resultText = (TextView) root.findViewById(R.id.commandResult);
 
 
+        //Start button event handler
         startbtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                if(ConnectFragment.getUrl().equals(null) || ConnectFragment.getUrl().isEmpty()){
-                    resultText.setText("URL is inactive");
+                if((ConnectFragment.getUrl() == null  || ConnectFragment.getUrl().isEmpty())
+                    && !ConnectFragment.checkIfPaired()){
+                    resultText.setText("You need to connect to host first");
                 }else{
-                    PostRequest(ConnectFragment.getUrl(), "Start");
+                    PostRequest(ConnectFragment.getUrl() + "/start", "Start", ConnectFragment.getMap());
                 }
             }
         });
 
+        //Stop button event handler
         stopbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ConnectFragment.getUrl().equals(null) || ConnectFragment.getUrl().isEmpty()){
-                    resultText.setText("URL is inactive");
+                if((ConnectFragment.getUrl() == null || ConnectFragment.getUrl().isEmpty())
+                        && !ConnectFragment.checkIfPaired()){
+                    resultText.setText("You need to connect to host first");
                 }else{
-                    PostRequest(ConnectFragment.getUrl(), "Stop");
+                    PostRequest(ConnectFragment.getUrl() + "/stop", "Stop", ConnectFragment.getMap());
                 }
             }
         });
 
+        //Unpair event handlers
         unpairbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(ConnectFragment.getUrl().equals(null) || ConnectFragment.getUrl().isEmpty()){
-                    resultText.setText("URL is inactive");
+                if((ConnectFragment.getUrl() == null || ConnectFragment.getUrl().isEmpty())
+                        && !ConnectFragment.checkIfPaired()){
+                    resultText.setText("You need to connect to host first");
                 }else{
-                    PostRequest(ConnectFragment.getUrl(), "Unpair");
+                    PostRequest(ConnectFragment.getUrl() + "/unpair", "Unpair", ConnectFragment.getMap());
                 }
             }
         });
@@ -96,19 +109,52 @@ public class CommandsFragment extends Fragment {
         return root;
     }
 
-    public void PostRequest(String localUrl, String btnLabel){
+    public void PostRequest(String localUrl, String btnLabel, HashMap<String, String> body){
 
         // Request a string response from the provided URL.
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, localUrl, null,
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, localUrl, new JSONObject(body),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        try {
+                            //Pull response message
+                            responseMsg = response.getString("msg");
+                            //Check which event handler is accessing this request and act accordingly
+                            switch(btnLabel){
+                                case "Start":
+                                    resultText.setText("Recording is in progress!");
+                                    break;
+                                case "Stop":
+                                    resultText.setText("Recording has stopped!");
+                                    break;
+                                case "Unpair":
+                                    resultText.setText("Disconnected from host device.");
+                                    ConnectFragment.unpair();
+                                    break;
+                            }
+                            //Log the response message for debugging purposes
+                            Log.e("Response: ", responseMsg);
 
+                        }catch(JSONException e){
+                            Log.e("JSON", e.toString());
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                switch(btnLabel){
+                    case "Start":
+                        resultText.setText("Device is already recording!");
+                        break;
+                    case "Stop":
+                        resultText.setText("Device is already stopped!");
+                        break;
+                    case "Unpair":
+                        resultText.setText("Device is already disconnected");
+                        break;
+                }
 
+                Log.e("Commands Error", error.toString());
             }
         });
 

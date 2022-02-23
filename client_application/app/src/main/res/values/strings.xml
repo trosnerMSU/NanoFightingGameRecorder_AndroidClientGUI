@@ -6,4 +6,7 @@
     <string name="btn_start">Start</string>
     <string name="btn_stop">Stop</string>
     <string name="btn_unpair">Unpair</string>
+    <string name="dialog_save_recording">Save Recording?</string>
+    <string name="save">Save</string>
+    <string name="no_thanks">No Thanks</string>
 </resources>

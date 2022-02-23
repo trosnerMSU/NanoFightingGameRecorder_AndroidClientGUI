@@ -33,6 +33,7 @@ import java.util.ListIterator;
 
 import client.application.R;
 import client.application.ui.MySingleton;
+import client.application.ui.SaveRecordingDialogFragment;
 import client.application.ui.connect.ConnectFragment;
 
 public class CommandsFragment extends Fragment {
@@ -126,6 +127,8 @@ public class CommandsFragment extends Fragment {
                                     break;
                                 case "Stop":
                                     resultText.setText("Recording has stopped!");
+                                    SaveRecordingDialogFragment dialog = new SaveRecordingDialogFragment();
+                                    dialog.onCreateDialog(getActivity().getApplicationContext());
                                     break;
                                 case "Unpair":
                                     resultText.setText("Disconnected from host device.");
